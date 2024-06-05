@@ -1,0 +1,99 @@
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+local topFrame = Instance.new("Frame")
+topFrame.Size = UDim2.new(1, 0, 0, 30)
+topFrame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+topFrame.Parent = frame
+
+local synapseText = Instance.new("TextLabel")
+synapseText.Size = UDim2.new(0, 80, 0, 20)
+synapseText.Position = UDim2.new(0, 10, 0, 5)
+synapseText.BackgroundColor3 = Color3.new(1, 1, 1)
+synapseText.TextColor3 = Color3.new(0, 0, 0)
+synapseText.TextSize = 14
+synapseText.Font = Enum.Font.SourceSansBold
+synapseText.Text = "Synapse V"
+synapseText.Parent = topFrame
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0.8, 0, 0.6, 0)
+textBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+textBox.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+textBox.TextColor3 = Color3.new(1, 1, 1)
+textBox.Parent = frame
+
+local injectButton = Instance.new("TextButton")
+injectButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+injectButton.Position = UDim2.new(0.2, 0, 0.85, 0)
+injectButton.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+injectButton.TextColor3 = Color3.new(1, 1, 1)
+injectButton.TextSize = 14
+injectButton.Font = Enum.Font.SourceSansBold
+injectButton.Text = "Inject"
+injectButton.Parent = frame
+
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+executeButton.Position = UDim2.new(0.6, 0, 0.85, 0)
+executeButton.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+executeButton.TextColor3 = Color3.new(1, 1, 1)
+executeButton.TextSize = 14
+executeButton.Font = Enum.Font.SourceSansBold
+executeButton.Text = "Execute"
+executeButton.Parent = frame
+executeButton.AutoButtonColor = false
+
+local injected = false
+
+local function showNotification(text)
+    local notification = Instance.new("TextLabel")
+    notification.Size = UDim2.new(0, 200, 0, 30)
+    notification.Position = UDim2.new(1, -210, 1, -40)
+    notification.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+    notification.TextColor3 = Color3.new(1, 1, 1)
+    notification.TextSize = 14
+    notification.Font = Enum.Font.SourceSansBold
+    notification.Text = text
+    notification.Parent = gui
+
+    wait(2)
+
+    notification:Destroy()
+end
+
+local function executeCode()
+    local code = textBox.Text
+
+    if injected then
+        local success, error = pcall(function()
+            loadstring(code)()
+        end)
+
+        if not success then
+            warn("Error executing code: " .. error)
+        end
+    else
+        warn("You need to inject first!")
+    end
+end
+
+injectButton.MouseButton1Click:Connect(function()
+    if not injected then
+        injected = true
+        showNotification("Injected!")
+    else
+        warn("You have already injected!")
+    end
+end)
+
+executeButton.MouseButton1Click:Connect(executeCode)
